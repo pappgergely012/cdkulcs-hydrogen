@@ -60,7 +60,7 @@ export function CartLineItem({
           </h4>
         </Link>
 
-        {selectedOptions.length > 0 && (
+        {/* {selectedOptions.length > 0 && (
           <div className="mb-2">
             {selectedOptions.map((option) => (
               <span
@@ -71,7 +71,7 @@ export function CartLineItem({
               </span>
             ))}
           </div>
-        )}
+        )} */}
 
         <div className="flex items-center justify-between">
           <ProductPrice price={line?.cost?.totalAmount} />

@@ -1,7 +1,7 @@
 import type {CartApiQueryFragment} from 'storefrontapi.generated';
 import type {CartLayout} from '~/components/CartMain';
 import {CartForm, Money, type OptimisticCart} from '@shopify/hydrogen';
-import {useEffect, useRef} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {useFetcher} from 'react-router';
 import type {FetcherWithComponents} from 'react-router';
 
@@ -42,28 +42,62 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
 }
 
 function CartCheckoutActions({checkoutUrl}: {checkoutUrl?: string}) {
+  const [isLoading, setIsLoading] = useState(false);
+
   if (!checkoutUrl) return null;
+
+  const handleClick = () => {
+    setIsLoading(true);
+  };
 
   return (
     <a
       href={checkoutUrl}
       target="_self"
-      className="block w-full bg-purple-600 text-white text-center font-medium py-3 px-4 rounded-lg hover:bg-purple-700 transition-colors duration-200"
+      onClick={handleClick}
+      className={`block w-full text-white text-center font-medium py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 ${
+        isLoading
+          ? 'bg-purple-500 cursor-not-allowed'
+          : 'bg-purple-600 hover:bg-purple-700'
+      }`}
     >
-      Tovább a fizetéshez
-      <svg
-        className="w-5 h-5 inline ml-2"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M9 5l7 7-7 7"
-        />
-      </svg>
+      {isLoading ? (
+        <>
+          <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            />
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            />
+          </svg>
+          Továbbítás...
+        </>
+      ) : (
+        <>
+          Tovább a fizetéshez
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 5l7 7-7 7"
+            />
+          </svg>
+        </>
+      )}
     </a>
   );
 }
