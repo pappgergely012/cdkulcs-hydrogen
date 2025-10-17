@@ -25,7 +25,7 @@ export default function Homepage() {
         <Suspense fallback={<ProductSkeletonRow count={4} />}>
           <Await resolve={products}>
             {(response) => (
-              <div className="max-w-7xl mx-auto pt-10 recommended-products-grid">
+              <div className="max-w-7xl mx-auto pt-10 grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 px-4">
                 {response
                   ? response.products.nodes.map(
                       (product: RecommendedProductFragment) => (

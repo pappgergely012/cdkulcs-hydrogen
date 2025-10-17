@@ -39,7 +39,7 @@ export function ProductItem({
       : 0;
 
   return (
-    <div className="flex flex-col justify-start bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+    <div className="cursor-pointer flex flex-col justify-start bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
       <div className="relative aspect-square overflow-hidden">
         {image && (
           <div className="absolute inset-0">
