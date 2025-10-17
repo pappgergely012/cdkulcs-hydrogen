@@ -1,12 +1,12 @@
-import {Link, useNavigate} from 'react-router';
-import {type MappedProductOptions} from '@shopify/hydrogen';
+import { Link, useNavigate } from 'react-router';
+import { type MappedProductOptions } from '@shopify/hydrogen';
 import type {
   Maybe,
   ProductOptionValueSwatch,
 } from '@shopify/hydrogen/storefront-api-types';
-import {AddToCartButton} from './AddToCartButton';
-import {useAside} from './Aside';
-import type {ProductFragment} from 'storefrontapi.generated';
+import { AddToCartButton } from './AddToCartButton';
+import { useAside } from './Aside';
+import type { ProductFragment } from 'storefrontapi.generated';
 
 export function ProductForm({
   productOptions,
@@ -16,18 +16,20 @@ export function ProductForm({
   selectedVariant: ProductFragment['selectedOrFirstAvailableVariant'];
 }) {
   const navigate = useNavigate();
-  const {open} = useAside();
+  const { open } = useAside();
   return (
-    <div className="product-form">
-      {productOptions.map((option) => {
+    <div className='space-y-4'>
+      {productOptions.map(option => {
         // If there is only a single value in the option values, don't display the option
         if (option.optionValues.length === 1) return null;
 
         return (
-          <div className="product-options" key={option.name}>
-            <h5>{option.name}</h5>
-            <div className="product-options-grid">
-              {option.optionValues.map((value) => {
+          <div className='space-y-2' key={option.name}>
+            <h3 className='text-xs font-medium text-gray-700 uppercase tracking-wide'>
+              {option.name}
+            </h3>
+            <div className='flex flex-wrap gap-1.5'>
+              {option.optionValues.map(value => {
                 const {
                   name,
                   handle,
@@ -46,18 +48,16 @@ export function ProductForm({
                   // as an anchor tag
                   return (
                     <Link
-                      className="product-options-item"
+                      className={`px-2.5 py-1.5 rounded border text-sm transition-all duration-200 ${
+                        selected
+                          ? 'border-gray-900 bg-gray-900 text-white'
+                          : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
+                      } ${!available ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                       key={option.name + name}
-                      prefetch="intent"
+                      prefetch='intent'
                       preventScrollReset
                       replace
                       to={`/products/${handle}?${variantUriQuery}`}
-                      style={{
-                        border: selected
-                          ? '1px solid black'
-                          : '1px solid transparent',
-                        opacity: available ? 1 : 0.3,
-                      }}
                     >
                       <ProductOptionSwatch swatch={swatch} name={name} />
                     </Link>
@@ -70,17 +70,13 @@ export function ProductForm({
                   // duplicated links
                   return (
                     <button
-                      type="button"
-                      className={`product-options-item${
-                        exists && !selected ? ' link' : ''
-                      }`}
+                      type='button'
+                      className={`px-2.5 py-1.5 rounded border text-sm transition-all duration-200 ${
+                        selected
+                          ? 'border-gray-900 bg-gray-900 text-white'
+                          : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
+                      } ${!exists ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                       key={option.name + name}
-                      style={{
-                        border: selected
-                          ? '1px solid black'
-                          : '1px solid transparent',
-                        opacity: available ? 1 : 0.3,
-                      }}
                       disabled={!exists}
                       onClick={() => {
                         if (!selected) {
@@ -97,29 +93,9 @@ export function ProductForm({
                 }
               })}
             </div>
-            <br />
           </div>
         );
       })}
-      <AddToCartButton
-        disabled={!selectedVariant || !selectedVariant.availableForSale}
-        onClick={() => {
-          open('cart');
-        }}
-        lines={
-          selectedVariant
-            ? [
-                {
-                  merchandiseId: selectedVariant.id,
-                  quantity: 1,
-                  selectedVariant,
-                },
-              ]
-            : []
-        }
-      >
-        {selectedVariant?.availableForSale ? 'Add to cart' : 'Sold out'}
-      </AddToCartButton>
     </div>
   );
 }
@@ -134,17 +110,27 @@ function ProductOptionSwatch({
   const image = swatch?.image?.previewImage?.url;
   const color = swatch?.color;
 
-  if (!image && !color) return name;
+  if (!image && !color) {
+    return <span className='text-sm font-medium'>{name}</span>;
+  }
 
   return (
-    <div
-      aria-label={name}
-      className="product-option-label-swatch"
-      style={{
-        backgroundColor: color || 'transparent',
-      }}
-    >
-      {!!image && <img src={image} alt={name} />}
+    <div aria-label={name} className='flex items-center gap-1.5'>
+      {image ? (
+        <img
+          src={image}
+          alt={name}
+          className='w-4 h-4 rounded-full object-cover border border-gray-200'
+        />
+      ) : (
+        <div
+          className='w-4 h-4 rounded-full border border-gray-200'
+          style={{
+            backgroundColor: color || 'transparent',
+          }}
+        />
+      )}
+      <span className='text-sm font-medium'>{name}</span>
     </div>
   );
 }
