@@ -20,7 +20,9 @@ export default function Homepage() {
       <HeroSection />
 
       <div className="recommended-products">
-        <h2>Recommended Products</h2>
+        <h2 className="mt-10 text-4xl md:text-5xl font-black text-gray-900 mb-6 text-center bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          Kiemelt termékeink
+        </h2>
 
         <Suspense fallback={<ProductSkeletonRow count={4} />}>
           <Await resolve={products}>
