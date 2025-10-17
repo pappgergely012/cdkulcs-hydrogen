@@ -5,6 +5,7 @@ import {
   Outlet,
   useLoaderData,
 } from 'react-router';
+import { useState } from 'react';
 import type { Route } from './+types/account';
 import { CUSTOMER_DETAILS_QUERY } from '~/graphql/customer-account/CustomerDetailsQuery';
 
@@ -36,6 +37,7 @@ export async function loader({ context }: Route.LoaderArgs) {
 
 export default function AccountLayout() {
   const { customer } = useLoaderData<typeof loader>();
+  const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
 
   const heading = customer
     ? customer.firstName
@@ -65,11 +67,53 @@ export default function AccountLayout() {
           {/* Content - Right Side */}
           <div className='lg:col-span-3'>
             <div className='bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/20'>
-              <Outlet context={{ customer }} />
+              <Outlet
+                context={{
+                  customer,
+                  openAddressModal: () => setIsAddressModalOpen(true),
+                }}
+              />
             </div>
           </div>
         </div>
       </div>
+
+      {/* Address Modal */}
+      {isAddressModalOpen && (
+        <div className='fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] flex items-center justify-center p-4'>
+          <div className='bg-white rounded-3xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl'>
+            <div className='flex justify-between items-center mb-6'>
+              <h2 className='text-2xl font-bold text-gray-900'>
+                Új cím hozzáadása
+              </h2>
+              <button
+                onClick={() => setIsAddressModalOpen(false)}
+                className='p-2 hover:bg-gray-100 rounded-xl transition-colors'
+              >
+                <svg
+                  className='w-6 h-6 text-gray-500'
+                  fill='none'
+                  stroke='currentColor'
+                  viewBox='0 0 24 24'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M6 18L18 6M6 6l12 12'
+                  />
+                </svg>
+              </button>
+            </div>
+
+            <div className='text-center py-8'>
+              <p className='text-gray-600'>
+                A cím hozzáadása itt fog megjelenni...
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
