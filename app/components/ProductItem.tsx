@@ -39,7 +39,10 @@ export function ProductItem({
       : 0;
 
   return (
-    <div className="cursor-pointer flex flex-col justify-start bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+    <Link
+      to={variantUrl}
+      className="group cursor-pointer flex flex-col justify-start bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl hover:scale-105 transition-all duration-300 ease-in-out"
+    >
       <div className="relative aspect-square overflow-hidden">
         {image && (
           <div className="absolute inset-0">
@@ -50,13 +53,13 @@ export function ProductItem({
               className="w-full h-full object-cover filter blur-sm scale-110"
             />
             {/* Dark overlay for better text readability */}
-            <div className="absolute inset-0 bg-black/40"></div>
+            <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors duration-300"></div>
           </div>
         )}
 
         {/* AKCIÓ Badge - only show if there's a discount */}
         {discount > 0 && (
-          <div className="absolute top-3 right-3 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold z-10">
+          <div className="absolute top-3 right-3 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold z-10 group-hover:scale-110 group-hover:bg-red-600 transition-all duration-300">
             AKCIÓ
           </div>
         )}
@@ -69,7 +72,7 @@ export function ProductItem({
                 alt={image.altText || product.title}
                 data={image}
                 loading={loading}
-                className="w-full h-full object-contain"
+                className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500 ease-out"
               />
             ) : (
               <div className="absolute inset-0 bg-gradient-to-br from-purple-600 to-purple-700"></div>
@@ -82,7 +85,9 @@ export function ProductItem({
       <div className="p-4 flex-1 flex flex-col justify-between">
         <div>
           {/* Product Title */}
-          <h3 className="font-bold text-gray-900 mb-2">{product.title}</h3>
+          <h3 className="font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors duration-300">
+            {product.title}
+          </h3>
 
           {/* Description */}
           <div className="h-10">
@@ -96,7 +101,7 @@ export function ProductItem({
 
         <div className="flex items-end justify-between">
           <div className="flex flex-col">
-            <span className="text-2xl font-bold text-green-600">
+            <span className="text-2xl font-bold text-green-600 group-hover:text-green-700 transition-colors duration-300">
               {currentPrice.toLocaleString('hu-HU')} Ft
             </span>
             {discount > 0 && (
@@ -112,15 +117,19 @@ export function ProductItem({
           </div>
 
           {/* Right side - Add to Cart Button */}
-          <Link
-            to={variantUrl}
-            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-1 px-3 rounded-lg transition-all duration-200 flex items-center gap-2 text-md"
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              // You can add add to cart logic here
+            }}
+            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-1 px-3 rounded-lg transition-all duration-200 flex items-center gap-2 text-md group-hover:scale-105 group-hover:shadow-lg"
           >
             <ShoppingCartIcon className="w-5 h-5" />
             Kosárba
-          </Link>
+          </button>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
