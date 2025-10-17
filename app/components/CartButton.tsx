@@ -4,19 +4,19 @@ import {
   useOptimisticCart,
 } from '@shopify/hydrogen';
 import type {CartApiQueryFragment} from 'storefrontapi.generated';
-import {useAside} from '~/components/Aside';
+import {useCart} from '~/components/PageLayout';
 
 export function CartButton({cart}: {cart: CartApiQueryFragment | null}) {
   const optimisticCart = useOptimisticCart(cart);
   const totalItems = optimisticCart?.totalQuantity ?? 0;
   const {publish, shop, cart: analyticsCart, prevCart} = useAnalytics();
-  const {open} = useAside();
+  const {open} = useCart();
 
   return (
     <button
       onClick={(e) => {
         e.preventDefault();
-        open('cart');
+        open();
         publish('cart_viewed', {
           cart: analyticsCart,
           prevCart,

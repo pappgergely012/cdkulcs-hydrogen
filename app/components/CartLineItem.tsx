@@ -4,7 +4,7 @@ import {CartForm, Image, type OptimisticCartLine} from '@shopify/hydrogen';
 import {useVariantUrl} from '~/lib/variants';
 import {Link} from 'react-router';
 import {ProductPrice} from './ProductPrice';
-import {useAside} from './Aside';
+import {useCart} from './PageLayout';
 import type {CartApiQueryFragment} from 'storefrontapi.generated';
 
 type CartLine = OptimisticCartLine<CartApiQueryFragment>;
@@ -23,22 +23,28 @@ export function CartLineItem({
   const {id, merchandise} = line;
   const {product, title, image, selectedOptions} = merchandise;
   const lineItemUrl = useVariantUrl(product.handle, selectedOptions);
-  const {close} = useAside();
+  const {close} = useCart();
 
   return (
-    <li key={id} className="cart-line">
+    <li
+      key={id}
+      className="flex gap-4 py-4 border-b border-gray-200 last:border-b-0"
+    >
       {image && (
-        <Image
-          alt={title}
-          aspectRatio="1/1"
-          data={image}
-          height={100}
-          loading="lazy"
-          width={100}
-        />
+        <div className="flex-shrink-0">
+          <Image
+            alt={title}
+            aspectRatio="1/1"
+            data={image}
+            height={80}
+            loading="lazy"
+            width={80}
+            className="rounded-lg object-cover"
+          />
+        </div>
       )}
 
-      <div>
+      <div className="flex-1 min-w-0">
         <Link
           prefetch="intent"
           to={lineItemUrl}
@@ -47,22 +53,30 @@ export function CartLineItem({
               close();
             }
           }}
+          className="block hover:text-purple-600 transition-colors duration-200"
         >
-          <p>
-            <strong>{product.title}</strong>
-          </p>
+          <h4 className="font-semibold text-gray-900 text-sm leading-tight mb-1 line-clamp-2">
+            {product.title}
+          </h4>
         </Link>
-        <ProductPrice price={line?.cost?.totalAmount} />
-        <ul>
-          {selectedOptions.map((option) => (
-            <li key={option.name}>
-              <small>
+
+        {selectedOptions.length > 0 && (
+          <div className="mb-2">
+            {selectedOptions.map((option) => (
+              <span
+                key={option.name}
+                className="inline-block text-xs text-gray-600 bg-gray-100 px-2 py-1 rounded mr-1 mb-1"
+              >
                 {option.name}: {option.value}
-              </small>
-            </li>
-          ))}
-        </ul>
-        <CartLineQuantity line={line} />
+              </span>
+            ))}
+          </div>
+        )}
+
+        <div className="flex items-center justify-between">
+          <ProductPrice price={line?.cost?.totalAmount} />
+          <CartLineQuantity line={line} />
+        </div>
       </div>
     </li>
   );
@@ -80,30 +94,37 @@ function CartLineQuantity({line}: {line: CartLine}) {
   const nextQuantity = Number((quantity + 1).toFixed(0));
 
   return (
-    <div className="cart-line-quantity">
-      <small>Quantity: {quantity} &nbsp;&nbsp;</small>
-      <CartLineUpdateButton lines={[{id: lineId, quantity: prevQuantity}]}>
-        <button
-          aria-label="Decrease quantity"
-          disabled={quantity <= 1 || !!isOptimistic}
-          name="decrease-quantity"
-          value={prevQuantity}
-        >
-          <span>&#8722; </span>
-        </button>
-      </CartLineUpdateButton>
-      &nbsp;
-      <CartLineUpdateButton lines={[{id: lineId, quantity: nextQuantity}]}>
-        <button
-          aria-label="Increase quantity"
-          name="increase-quantity"
-          value={nextQuantity}
-          disabled={!!isOptimistic}
-        >
-          <span>&#43;</span>
-        </button>
-      </CartLineUpdateButton>
-      &nbsp;
+    <div className="flex items-center gap-2">
+      <div className="flex items-center border border-gray-300 rounded-lg">
+        <CartLineUpdateButton lines={[{id: lineId, quantity: prevQuantity}]}>
+          <button
+            aria-label="Decrease quantity"
+            disabled={quantity <= 1 || !!isOptimistic}
+            name="decrease-quantity"
+            value={prevQuantity}
+            className="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+          >
+            <span className="text-lg">−</span>
+          </button>
+        </CartLineUpdateButton>
+
+        <span className="px-3 py-1 text-sm font-medium text-gray-900 min-w-[2rem] text-center">
+          {quantity}
+        </span>
+
+        <CartLineUpdateButton lines={[{id: lineId, quantity: nextQuantity}]}>
+          <button
+            aria-label="Increase quantity"
+            name="increase-quantity"
+            value={nextQuantity}
+            disabled={!!isOptimistic}
+            className="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+          >
+            <span className="text-lg">+</span>
+          </button>
+        </CartLineUpdateButton>
+      </div>
+
       <CartLineRemoveButton lineIds={[lineId]} disabled={!!isOptimistic} />
     </div>
   );
@@ -128,8 +149,25 @@ function CartLineRemoveButton({
       action={CartForm.ACTIONS.LinesRemove}
       inputs={{lineIds}}
     >
-      <button disabled={disabled} type="submit">
-        Remove
+      <button
+        disabled={disabled}
+        type="submit"
+        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+        aria-label="Termék eltávolítása"
+      >
+        <svg
+          className="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+          />
+        </svg>
       </button>
     </CartForm>
   );

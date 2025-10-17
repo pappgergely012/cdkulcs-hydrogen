@@ -12,16 +12,10 @@ import type {
   FooterQuery,
   HeaderQuery,
 } from 'storefrontapi.generated';
-import {Aside} from '~/components/Aside';
 import {Footer} from '~/components/Footer';
 import {Header} from '~/components/Header';
 import {MobileMenu} from '~/components/MobileMenu';
 import {CartMain} from '~/components/CartMain';
-import {
-  SEARCH_ENDPOINT,
-  SearchFormPredictive,
-} from '~/components/SearchFormPredictive';
-import {SearchResultsPredictive} from '~/components/SearchResultsPredictive';
 
 // Mobile Menu Context
 interface MobileMenuContextValue {
@@ -32,10 +26,27 @@ interface MobileMenuContextValue {
 
 const MobileMenuContext = createContext<MobileMenuContextValue | null>(null);
 
+// Cart Context
+interface CartContextValue {
+  open: () => void;
+  close: () => void;
+  isOpen: boolean;
+}
+
+const CartContext = createContext<CartContextValue | null>(null);
+
 export function useMobileMenu() {
   const context = useContext(MobileMenuContext);
   if (!context) {
     throw new Error('useMobileMenu must be used within a MobileMenuProvider');
+  }
+  return context;
+}
+
+export function useCart() {
+  const context = useContext(CartContext);
+  if (!context) {
+    throw new Error('useCart must be used within a CartProvider');
   }
   return context;
 }
@@ -75,6 +86,41 @@ function MobileMenuProvider({children}: {children: React.ReactNode}) {
   );
 }
 
+function CartProvider({children}: {children: React.ReactNode}) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  // Close cart on escape key
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscape);
+      // Prevent body scroll when cart is open
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
+
+  const open = () => setIsOpen(true);
+  const close = () => setIsOpen(false);
+
+  return (
+    <CartContext.Provider value={{open, close, isOpen}}>
+      {children}
+    </CartContext.Provider>
+  );
+}
+
 interface PageLayoutProps {
   cart: Promise<CartApiQueryFragment | null>;
   footer: Promise<FooterQuery | null>;
@@ -94,9 +140,8 @@ export function PageLayout({
 }: PageLayoutProps) {
   return (
     <MobileMenuProvider>
-      <Aside.Provider>
-        <CartAside cart={cart} />
-        <SearchAside />
+      <CartProvider>
+        <CartSidebar cart={cart} />
         {header && header.menu && header.shop.primaryDomain?.url && (
           <MobileMenu
             menu={header.menu}
@@ -114,108 +159,75 @@ export function PageLayout({
           />
         )}
         <main>{children}</main>
-        <Footer
-          footer={footer}
-          header={header}
-          publicStoreDomain={publicStoreDomain}
-        />
-      </Aside.Provider>
+        <Footer />
+      </CartProvider>
     </MobileMenuProvider>
   );
 }
 
-function CartAside({cart}: {cart: PageLayoutProps['cart']}) {
+function CartSidebar({cart}: {cart: PageLayoutProps['cart']}) {
+  const {isOpen, close} = useCart();
+
   return (
-    <Aside type="cart" heading="CART">
-      <Suspense fallback={<p>Loading cart ...</p>}>
-        <Await resolve={cart}>
-          {(cart) => {
-            return <CartMain cart={cart} layout="aside" />;
-          }}
-        </Await>
-      </Suspense>
-    </Aside>
-  );
-}
+    <>
+      {/* Overlay */}
+      {isOpen && (
+        <div className="fixed inset-0 z-[70]">
+          <div className="absolute inset-0 bg-black opacity-50"></div>
+          <button
+            className="absolute inset-0 w-full h-full"
+            onClick={close}
+            aria-label="Kosár bezárása"
+          />
+        </div>
+      )}
 
-function SearchAside() {
-  const queriesDatalistId = useId();
-  return (
-    <Aside type="search" heading="SEARCH">
-      <div className="predictive-search">
-        <br />
-        <SearchFormPredictive>
-          {({fetchResults, goToSearch, inputRef}) => (
-            <>
-              <input
-                name="q"
-                onChange={fetchResults}
-                onFocus={fetchResults}
-                placeholder="Search"
-                ref={inputRef}
-                type="search"
-                list={queriesDatalistId}
-              />
-              &nbsp;
-              <button onClick={goToSearch}>Search</button>
-            </>
-          )}
-        </SearchFormPredictive>
+      {/* Sidebar */}
+      <div
+        className={`fixed top-0 right-0 h-full w-96 max-w-[90vw] bg-white shadow-2xl transform transition-transform duration-300 ease-in-out z-[71] ${
+          isOpen ? 'translate-x-0' : 'translate-x-full'
+        }`}
+      >
+        {/* Content */}
+        <div className="h-full overflow-y-auto">
+          <div className="flex flex-col h-full">
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">Kosár</h3>
+              <button
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200"
+                onClick={close}
+                aria-label="Bezárás"
+              >
+                <svg
+                  className="w-6 h-6 text-gray-700"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
 
-        <SearchResultsPredictive>
-          {({items, total, term, state, closeSearch}) => {
-            const {articles, collections, pages, products, queries} = items;
-
-            if (state === 'loading' && term.current) {
-              return <div>Loading...</div>;
-            }
-
-            if (!total) {
-              return <SearchResultsPredictive.Empty term={term} />;
-            }
-
-            return (
-              <>
-                <SearchResultsPredictive.Queries
-                  queries={queries}
-                  queriesDatalistId={queriesDatalistId}
-                />
-                <SearchResultsPredictive.Products
-                  products={products}
-                  closeSearch={closeSearch}
-                  term={term}
-                />
-                <SearchResultsPredictive.Collections
-                  collections={collections}
-                  closeSearch={closeSearch}
-                  term={term}
-                />
-                <SearchResultsPredictive.Pages
-                  pages={pages}
-                  closeSearch={closeSearch}
-                  term={term}
-                />
-                <SearchResultsPredictive.Articles
-                  articles={articles}
-                  closeSearch={closeSearch}
-                  term={term}
-                />
-                {term.current && total ? (
-                  <Link
-                    onClick={closeSearch}
-                    to={`${SEARCH_ENDPOINT}?q=${term.current}`}
-                  >
-                    <p>
-                      View all results for <q>{term.current}</q>
-                      &nbsp; →
-                    </p>
-                  </Link>
-                ) : null}
-              </>
-            );
-          }}
-        </SearchResultsPredictive>
+            {/* Main Content */}
+            <div className="flex-1 overflow-y-auto">
+              <Suspense fallback={<p className="p-4">Kosár betöltése...</p>}>
+                <Await resolve={cart}>
+                  {(cart) => {
+                    return <CartMain cart={cart} layout="aside" />;
+                  }}
+                </Await>
+              </Suspense>
+            </div>
+          </div>
+        </div>
       </div>
-    </Aside>
+    </>
   );
 }
