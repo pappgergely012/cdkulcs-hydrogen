@@ -1,5 +1,12 @@
 import {Await, Link} from 'react-router';
-import {Suspense, useId} from 'react';
+import {
+  Suspense,
+  useId,
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+} from 'react';
 import type {
   CartApiQueryFragment,
   FooterQuery,
@@ -7,13 +14,66 @@ import type {
 } from 'storefrontapi.generated';
 import {Aside} from '~/components/Aside';
 import {Footer} from '~/components/Footer';
-import {Header, HeaderMenu} from '~/components/Header';
+import {Header} from '~/components/Header';
+import {MobileMenu} from '~/components/MobileMenu';
 import {CartMain} from '~/components/CartMain';
 import {
   SEARCH_ENDPOINT,
   SearchFormPredictive,
 } from '~/components/SearchFormPredictive';
 import {SearchResultsPredictive} from '~/components/SearchResultsPredictive';
+
+// Mobile Menu Context
+interface MobileMenuContextValue {
+  open: () => void;
+  close: () => void;
+  isOpen: boolean;
+}
+
+const MobileMenuContext = createContext<MobileMenuContextValue | null>(null);
+
+export function useMobileMenu() {
+  const context = useContext(MobileMenuContext);
+  if (!context) {
+    throw new Error('useMobileMenu must be used within a MobileMenuProvider');
+  }
+  return context;
+}
+
+function MobileMenuProvider({children}: {children: React.ReactNode}) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  // Close menu on escape key
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscape);
+      // Prevent body scroll when menu is open
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
+
+  const open = () => setIsOpen(true);
+  const close = () => setIsOpen(false);
+
+  return (
+    <MobileMenuContext.Provider value={{open, close, isOpen}}>
+      {children}
+    </MobileMenuContext.Provider>
+  );
+}
 
 interface PageLayoutProps {
   cart: Promise<CartApiQueryFragment | null>;
@@ -33,25 +93,34 @@ export function PageLayout({
   publicStoreDomain,
 }: PageLayoutProps) {
   return (
-    <Aside.Provider>
-      <CartAside cart={cart} />
-      <SearchAside />
-      <MobileMenuAside header={header} publicStoreDomain={publicStoreDomain} />
-      {header && (
-        <Header
+    <MobileMenuProvider>
+      <Aside.Provider>
+        <CartAside cart={cart} />
+        <SearchAside />
+        {header && header.menu && header.shop.primaryDomain?.url && (
+          <MobileMenu
+            menu={header.menu}
+            primaryDomainUrl={header.shop.primaryDomain.url}
+            publicStoreDomain={publicStoreDomain}
+            isLoggedIn={isLoggedIn}
+          />
+        )}
+        {header && (
+          <Header
+            header={header}
+            cart={cart}
+            isLoggedIn={isLoggedIn}
+            publicStoreDomain={publicStoreDomain}
+          />
+        )}
+        <main>{children}</main>
+        <Footer
+          footer={footer}
           header={header}
-          cart={cart}
-          isLoggedIn={isLoggedIn}
           publicStoreDomain={publicStoreDomain}
         />
-      )}
-      <main>{children}</main>
-      <Footer
-        footer={footer}
-        header={header}
-        publicStoreDomain={publicStoreDomain}
-      />
-    </Aside.Provider>
+      </Aside.Provider>
+    </MobileMenuProvider>
   );
 }
 
@@ -148,27 +217,5 @@ function SearchAside() {
         </SearchResultsPredictive>
       </div>
     </Aside>
-  );
-}
-
-function MobileMenuAside({
-  header,
-  publicStoreDomain,
-}: {
-  header: PageLayoutProps['header'];
-  publicStoreDomain: PageLayoutProps['publicStoreDomain'];
-}) {
-  return (
-    header.menu &&
-    header.shop.primaryDomain?.url && (
-      <Aside type="mobile" heading="MENU">
-        <HeaderMenu
-          menu={header.menu}
-          viewport="mobile"
-          primaryDomainUrl={header.shop.primaryDomain.url}
-          publicStoreDomain={publicStoreDomain}
-        />
-      </Aside>
-    )
   );
 }
