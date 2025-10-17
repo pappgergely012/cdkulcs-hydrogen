@@ -16,7 +16,7 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
   return (
     <div
       aria-labelledby="cart-summary"
-      className={`bg-white border-t border-gray-200 ${isAside ? 'p-4' : 'p-6'}`}
+      className={`bg-white border-t border-gray-200 ${isAside ? 'p-4 sticky bottom-0' : 'p-6'}`}
     >
       <h4 className="text-lg font-semibold text-gray-900 mb-4">Összesítés</h4>
 
