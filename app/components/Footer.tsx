@@ -1,17 +1,6 @@
 import {NavLink} from 'react-router';
-import type {FooterQuery, HeaderQuery} from 'storefrontapi.generated';
 
-interface FooterProps {
-  footer: Promise<FooterQuery | null>;
-  header: HeaderQuery;
-  publicStoreDomain: string;
-}
-
-export function Footer({
-  footer: footerPromise,
-  header,
-  publicStoreDomain,
-}: FooterProps) {
+export function Footer() {
   return (
     <footer className="bg-gray-900 text-white">
       <div className="max-w-7xl mx-auto px-4 py-12">
