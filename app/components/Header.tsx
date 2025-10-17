@@ -63,7 +63,7 @@ export function Header({
             <NavLink
               to='/pages/contact'
               className={`transition-colors duration-200 ${
-                location.pathname === '/pages/kapcsolat'
+                location.pathname === '/pages/contact'
                   ? 'text-purple-500'
                   : 'text-gray-700 hover:text-purple-500'
               }`}
