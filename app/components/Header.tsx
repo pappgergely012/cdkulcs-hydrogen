@@ -108,7 +108,7 @@ export function Header({
             </div>
 
             {/* Desktop CTAs - Hidden on mobile */}
-            <div className="hidden md:flex items-center gap-0.5">
+            <div className="hidden md:flex items-center gap-1">
               {/* Account Icon */}
               <NavLink
                 prefetch="intent"
@@ -117,7 +117,7 @@ export function Header({
               >
                 <Suspense
                   fallback={
-                    <div className="cursor-pointer flex items-center gap-2 px-2 py-1 rounded-xl bg-gray-100">
+                    <div className="cursor-pointer flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100">
                       <UserIcon className="w-5 h-5 text-gray-700" />
                       {/* Tooltip */}
                       <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-1 bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
@@ -130,7 +130,7 @@ export function Header({
                   <Await
                     resolve={isLoggedIn}
                     errorElement={
-                      <div className="cursor-pointer flex items-center gap-2 px-2 py-1 rounded-xl bg-gray-100">
+                      <div className="cursor-pointer flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100">
                         <UserIcon className="w-5 h-5 text-gray-700" />
                         {/* Tooltip */}
                         <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-1 bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
@@ -141,11 +141,21 @@ export function Header({
                     }
                   >
                     {(isLoggedIn) => (
-                      <div className="cursor-pointer flex items-center gap-2 px-2 py-1 rounded-xl transition-all duration-200 bg-purple-100 hover:bg-purple-200">
-                        <UserIcon className="w-5 h-5 text-purple-700" />
+                      <div
+                        className={`cursor-pointer flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-200 ${
+                          isLoggedIn
+                            ? 'bg-purple-100 hover:bg-purple-200'
+                            : 'bg-gray-100 hover:bg-gray-200'
+                        }`}
+                      >
+                        <UserIcon
+                          className={`w-5 h-5 ${
+                            isLoggedIn ? 'text-purple-700' : 'text-gray-700'
+                          }`}
+                        />
                         {/* Tooltip */}
                         <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-1 bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
-                          {isLoggedIn ? 'Fiók beállítások' : 'Bejelentkezés '}
+                          {isLoggedIn ? 'Fiók beállítások' : 'Bejelentkezés'}
                           <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-b-gray-800"></div>
                         </div>
                       </div>
@@ -156,8 +166,10 @@ export function Header({
 
               {/* Search Toggle */}
               <NavLink to="/search" prefetch="intent">
-                <button className=" cursor-pointer p-1 hover:bg-purple-100 rounded-lg transition-colors duration-200">
-                  <MagnifyingGlassIcon className="w-5 h-5 text-gray-700 hover:text-purple-700" />
+                <button className="relative py-1 px-1 rounded-xl transition-all duration-200">
+                  <div className="cursor-pointer flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 hover:bg-gray-200">
+                    <MagnifyingGlassIcon className="w-5 h-5 text-gray-700" />
+                  </div>
                 </button>
               </NavLink>
 
@@ -165,7 +177,7 @@ export function Header({
               <Suspense
                 fallback={
                   <button className="relative py-1 px-1 rounded-xl">
-                    <div className="cursor-pointer flex items-center gap-2 px-2 py-1 rounded-xl bg-gray-100">
+                    <div className="cursor-pointer flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100">
                       <svg
                         className="w-5 h-5 text-gray-700"
                         fill="none"

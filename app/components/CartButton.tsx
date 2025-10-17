@@ -27,7 +27,7 @@ export function CartButton({cart}: {cart: CartApiQueryFragment | null}) {
       className="relative py-1 px-1 rounded-xl transition-all duration-200"
     >
       <div
-        className={`cursor-pointer flex items-center gap-2 px-2 py-1 rounded-xl transition-all duration-200 ${
+        className={`cursor-pointer flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-200 ${
           totalItems > 0
             ? 'bg-purple-100 hover:bg-purple-200'
             : 'bg-gray-100 hover:bg-gray-200'
