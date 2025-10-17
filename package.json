@@ -11,9 +11,10 @@
     "preview": "shopify hydrogen preview --build",
     "lint": "eslint --no-error-on-unmatched-pattern .",
     "typecheck": "react-router typegen && tsc --noEmit",
-    "codegen": "shopify hydrogen codegen && react-router typegen"
+    "codegen": "shopify hydrogen codegen && react-router typegen",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
-  "prettier": "@shopify/prettier-config",
   "dependencies": {
     "@heroicons/react": "^2.2.0",
     "@shopify/hydrogen": "2025.7.0",

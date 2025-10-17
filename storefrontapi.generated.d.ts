@@ -330,12 +330,14 @@ export type RecommendedProductFragment = Pick<
     maxVariantPrice: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
   };
   variants: {
-    nodes: Array<{
-      price: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
-      compareAtPrice?: StorefrontAPI.Maybe<
-        Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
-      >;
-    }>;
+    nodes: Array<
+      Pick<StorefrontAPI.ProductVariant, 'id'> & {
+        price: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
+        compareAtPrice?: StorefrontAPI.Maybe<
+          Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
+        >;
+      }
+    >;
   };
   featuredImage?: StorefrontAPI.Maybe<
     Pick<StorefrontAPI.Image, 'id' | 'url' | 'altText' | 'width' | 'height'>
@@ -372,12 +374,14 @@ export type RecommendedProductsQuery = {
           >;
         };
         variants: {
-          nodes: Array<{
-            price: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
-            compareAtPrice?: StorefrontAPI.Maybe<
-              Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
-            >;
-          }>;
+          nodes: Array<
+            Pick<StorefrontAPI.ProductVariant, 'id'> & {
+              price: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
+              compareAtPrice?: StorefrontAPI.Maybe<
+                Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
+              >;
+            }
+          >;
         };
         featuredImage?: StorefrontAPI.Maybe<
           Pick<
@@ -395,7 +399,7 @@ export type StoreRobotsQueryVariables = StorefrontAPI.Exact<{
   language?: StorefrontAPI.InputMaybe<StorefrontAPI.LanguageCode>;
 }>;
 
-export type StoreRobotsQuery = {shop: Pick<StorefrontAPI.Shop, 'id'>};
+export type StoreRobotsQuery = { shop: Pick<StorefrontAPI.Shop, 'id'> };
 
 export type ArticleQueryVariables = StorefrontAPI.Exact<{
   articleHandle: StorefrontAPI.Scalars['String']['input'];
@@ -787,7 +791,7 @@ export type ProductVariantFragment = Pick<
     Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
   >;
   image?: StorefrontAPI.Maybe<
-    {__typename: 'Image'} & Pick<
+    { __typename: 'Image' } & Pick<
       StorefrontAPI.Image,
       'id' | 'url' | 'altText' | 'width' | 'height'
     >
@@ -824,7 +828,7 @@ export type ProductFragment = Pick<
                 Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
               >;
               image?: StorefrontAPI.Maybe<
-                {__typename: 'Image'} & Pick<
+                { __typename: 'Image' } & Pick<
                   StorefrontAPI.Image,
                   'id' | 'url' | 'altText' | 'width' | 'height'
                 >
@@ -861,7 +865,7 @@ export type ProductFragment = Pick<
         Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
       >;
       image?: StorefrontAPI.Maybe<
-        {__typename: 'Image'} & Pick<
+        { __typename: 'Image' } & Pick<
           StorefrontAPI.Image,
           'id' | 'url' | 'altText' | 'width' | 'height'
         >
@@ -885,7 +889,7 @@ export type ProductFragment = Pick<
         Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
       >;
       image?: StorefrontAPI.Maybe<
-        {__typename: 'Image'} & Pick<
+        { __typename: 'Image' } & Pick<
           StorefrontAPI.Image,
           'id' | 'url' | 'altText' | 'width' | 'height'
         >
@@ -938,7 +942,7 @@ export type ProductQuery = {
                     Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
                   >;
                   image?: StorefrontAPI.Maybe<
-                    {__typename: 'Image'} & Pick<
+                    { __typename: 'Image' } & Pick<
                       StorefrontAPI.Image,
                       'id' | 'url' | 'altText' | 'width' | 'height'
                     >
@@ -975,7 +979,7 @@ export type ProductQuery = {
             Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
           >;
           image?: StorefrontAPI.Maybe<
-            {__typename: 'Image'} & Pick<
+            { __typename: 'Image' } & Pick<
               StorefrontAPI.Image,
               'id' | 'url' | 'altText' | 'width' | 'height'
             >
@@ -999,7 +1003,7 @@ export type ProductQuery = {
             Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
           >;
           image?: StorefrontAPI.Maybe<
-            {__typename: 'Image'} & Pick<
+            { __typename: 'Image' } & Pick<
               StorefrontAPI.Image,
               'id' | 'url' | 'altText' | 'width' | 'height'
             >
@@ -1019,7 +1023,7 @@ export type ProductQuery = {
   >;
 };
 
-export type SearchProductFragment = {__typename: 'Product'} & Pick<
+export type SearchProductFragment = { __typename: 'Product' } & Pick<
   StorefrontAPI.Product,
   'handle' | 'id' | 'publishedAt' | 'title' | 'trackingParameters' | 'vendor'
 > & {
@@ -1040,12 +1044,12 @@ export type SearchProductFragment = {__typename: 'Product'} & Pick<
     >;
   };
 
-export type SearchPageFragment = {__typename: 'Page'} & Pick<
+export type SearchPageFragment = { __typename: 'Page' } & Pick<
   StorefrontAPI.Page,
   'handle' | 'id' | 'title' | 'trackingParameters'
 >;
 
-export type SearchArticleFragment = {__typename: 'Article'} & Pick<
+export type SearchArticleFragment = { __typename: 'Article' } & Pick<
   StorefrontAPI.Article,
   'handle' | 'id' | 'title' | 'trackingParameters'
 >;
@@ -1072,7 +1076,7 @@ export type RegularSearchQueryVariables = StorefrontAPI.Exact<{
 export type RegularSearchQuery = {
   articles: {
     nodes: Array<
-      {__typename: 'Article'} & Pick<
+      { __typename: 'Article' } & Pick<
         StorefrontAPI.Article,
         'handle' | 'id' | 'title' | 'trackingParameters'
       >
@@ -1080,7 +1084,7 @@ export type RegularSearchQuery = {
   };
   pages: {
     nodes: Array<
-      {__typename: 'Page'} & Pick<
+      { __typename: 'Page' } & Pick<
         StorefrontAPI.Page,
         'handle' | 'id' | 'title' | 'trackingParameters'
       >
@@ -1088,7 +1092,7 @@ export type RegularSearchQuery = {
   };
   products: {
     nodes: Array<
-      {__typename: 'Product'} & Pick<
+      { __typename: 'Product' } & Pick<
         StorefrontAPI.Product,
         | 'handle'
         | 'id'
@@ -1124,7 +1128,7 @@ export type RegularSearchQuery = {
   };
 };
 
-export type PredictiveArticleFragment = {__typename: 'Article'} & Pick<
+export type PredictiveArticleFragment = { __typename: 'Article' } & Pick<
   StorefrontAPI.Article,
   'id' | 'title' | 'handle' | 'trackingParameters'
 > & {
@@ -1134,7 +1138,7 @@ export type PredictiveArticleFragment = {__typename: 'Article'} & Pick<
     >;
   };
 
-export type PredictiveCollectionFragment = {__typename: 'Collection'} & Pick<
+export type PredictiveCollectionFragment = { __typename: 'Collection' } & Pick<
   StorefrontAPI.Collection,
   'id' | 'title' | 'handle' | 'trackingParameters'
 > & {
@@ -1143,12 +1147,12 @@ export type PredictiveCollectionFragment = {__typename: 'Collection'} & Pick<
     >;
   };
 
-export type PredictivePageFragment = {__typename: 'Page'} & Pick<
+export type PredictivePageFragment = { __typename: 'Page' } & Pick<
   StorefrontAPI.Page,
   'id' | 'title' | 'handle' | 'trackingParameters'
 >;
 
-export type PredictiveProductFragment = {__typename: 'Product'} & Pick<
+export type PredictiveProductFragment = { __typename: 'Product' } & Pick<
   StorefrontAPI.Product,
   'id' | 'title' | 'handle' | 'trackingParameters'
 > & {
@@ -1184,7 +1188,7 @@ export type PredictiveSearchQueryVariables = StorefrontAPI.Exact<{
 export type PredictiveSearchQuery = {
   predictiveSearch?: StorefrontAPI.Maybe<{
     articles: Array<
-      {__typename: 'Article'} & Pick<
+      { __typename: 'Article' } & Pick<
         StorefrontAPI.Article,
         'id' | 'title' | 'handle' | 'trackingParameters'
       > & {
@@ -1195,7 +1199,7 @@ export type PredictiveSearchQuery = {
         }
     >;
     collections: Array<
-      {__typename: 'Collection'} & Pick<
+      { __typename: 'Collection' } & Pick<
         StorefrontAPI.Collection,
         'id' | 'title' | 'handle' | 'trackingParameters'
       > & {
@@ -1205,13 +1209,13 @@ export type PredictiveSearchQuery = {
         }
     >;
     pages: Array<
-      {__typename: 'Page'} & Pick<
+      { __typename: 'Page' } & Pick<
         StorefrontAPI.Page,
         'id' | 'title' | 'handle' | 'trackingParameters'
       >
     >;
     products: Array<
-      {__typename: 'Product'} & Pick<
+      { __typename: 'Product' } & Pick<
         StorefrontAPI.Product,
         'id' | 'title' | 'handle' | 'trackingParameters'
       > & {
@@ -1229,7 +1233,7 @@ export type PredictiveSearchQuery = {
         }
     >;
     queries: Array<
-      {__typename: 'SearchQuerySuggestion'} & Pick<
+      { __typename: 'SearchQuerySuggestion' } & Pick<
         StorefrontAPI.SearchQuerySuggestion,
         'text' | 'styledText' | 'trackingParameters'
       >
@@ -1250,7 +1254,7 @@ interface GeneratedQueryTypes {
     return: FeaturedCollectionQuery;
     variables: FeaturedCollectionQueryVariables;
   };
-  '#graphql\n  fragment RecommendedProduct on Product {\n    id\n    title\n    handle\n    priceRange {\n      minVariantPrice {\n        amount\n        currencyCode\n      }\n      maxVariantPrice {\n        amount\n        currencyCode\n      }\n    }\n    compareAtPriceRange {\n      minVariantPrice {\n        amount\n        currencyCode\n      }\n      maxVariantPrice {\n        amount\n        currencyCode\n      }\n    }\n    variants(first: 1) {\n      nodes {\n        price {\n          amount\n          currencyCode\n        }\n        compareAtPrice {\n          amount\n          currencyCode\n        }\n      }\n    }\n    featuredImage {\n      id\n      url\n      altText\n      width\n      height\n    }\n  }\n  query RecommendedProducts ($country: CountryCode, $language: LanguageCode)\n    @inContext(country: $country, language: $language) {\n    products(first: 4, sortKey: UPDATED_AT, reverse: true) {\n      nodes {\n        ...RecommendedProduct\n      }\n    }\n  }\n': {
+  '#graphql\n  fragment RecommendedProduct on Product {\n    id\n    title\n    handle\n    priceRange {\n      minVariantPrice {\n        amount\n        currencyCode\n      }\n      maxVariantPrice {\n        amount\n        currencyCode\n      }\n    }\n    compareAtPriceRange {\n      minVariantPrice {\n        amount\n        currencyCode\n      }\n      maxVariantPrice {\n        amount\n        currencyCode\n      }\n    }\n    variants(first: 1) {\n      nodes {\n        id\n        price {\n          amount\n          currencyCode\n        }\n        compareAtPrice {\n          amount\n          currencyCode\n        }\n      }\n    }\n    featuredImage {\n      id\n      url\n      altText\n      width\n      height\n    }\n  }\n  query RecommendedProducts ($country: CountryCode, $language: LanguageCode)\n    @inContext(country: $country, language: $language) {\n    products(first: 4, sortKey: UPDATED_AT, reverse: true) {\n      nodes {\n        ...RecommendedProduct\n      }\n    }\n  }\n': {
     return: RecommendedProductsQuery;
     variables: RecommendedProductsQueryVariables;
   };
