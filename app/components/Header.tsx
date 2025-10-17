@@ -1,12 +1,7 @@
 import {Suspense} from 'react';
 import {Await, NavLink, useLocation} from 'react-router';
 import type {HeaderQuery, CartApiQueryFragment} from 'storefrontapi.generated';
-import {useAside} from '~/components/Aside';
-import {
-  UserIcon,
-  Cog6ToothIcon,
-  MagnifyingGlassIcon,
-} from '@heroicons/react/24/solid';
+import {UserIcon, MagnifyingGlassIcon} from '@heroicons/react/24/solid';
 import {CartButton} from '~/components/CartButton';
 import {useMobileMenu} from '~/components/PageLayout';
 
@@ -71,14 +66,6 @@ export function Header({
           {/* Right Side CTAs */}
           <div className="ml-auto">
             <nav className="flex items-center gap-2" role="navigation">
-              {/* Mobile Menu Toggle */}
-              <button
-                className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200"
-                onClick={openMobileMenu}
-              >
-                <span className="text-xl font-bold">☰</span>
-              </button>
-
               {/* Cart - Only visible on mobile */}
               <div className="md:hidden">
                 <Suspense
@@ -107,6 +94,26 @@ export function Header({
                   </Await>
                 </Suspense>
               </div>
+
+              {/* Mobile Menu Toggle */}
+              <button
+                className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200"
+                onClick={openMobileMenu}
+              >
+                <svg
+                  className="w-6 h-6 text-gray-700"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                </svg>
+              </button>
 
               {/* Desktop CTAs - Hidden on mobile */}
               <div className="hidden md:flex items-center gap-1">

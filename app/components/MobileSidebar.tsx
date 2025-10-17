@@ -21,9 +21,32 @@ export function MobileSidebar({
   const location = useLocation();
 
   return (
-    <div className="flex flex-col justify-between h-full p-4">
+    <div className="flex flex-col justify-between h-full p-4 z-10">
+      {/* Close Button */}
+      <div className="flex justify-end mb-4">
+        <button
+          onClick={onClose}
+          className="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200"
+          aria-label="Menü bezárása"
+        >
+          <svg
+            className="w-6 h-6 text-gray-700"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+
       {/* Navigation Menu */}
-      <nav className="flex  flex-col gap-4 flex-1 pt-10" role="navigation">
+      <nav className="flex  flex-col gap-4  pt-6" role="navigation">
         {/* Menu Items */}
         {(menu || FALLBACK_MENU).items.map((item) => {
           if (!item.url) return null;
