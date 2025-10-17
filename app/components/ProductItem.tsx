@@ -1,5 +1,5 @@
 import {Link} from 'react-router';
-import {Image, Money} from '@shopify/hydrogen';
+import {Image, Money, CartForm} from '@shopify/hydrogen';
 import type {
   ProductItemFragment,
   CollectionItemFragment,
@@ -117,17 +117,47 @@ export function ProductItem({
           </div>
 
           {/* Right side - Add to Cart Button */}
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              // You can add add to cart logic here
-            }}
-            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-1 px-3 rounded-lg transition-all duration-200 flex items-center gap-2 text-md group-hover:scale-105 group-hover:shadow-lg"
-          >
-            <ShoppingCartIcon className="w-5 h-5" />
-            Kosárba
-          </button>
+          {'variants' in product && product.variants?.nodes?.[0] ? (
+            <CartForm
+              route="/cart"
+              action={CartForm.ACTIONS.LinesAdd}
+              inputs={{
+                lines: [
+                  {
+                    merchandiseId: (product.variants.nodes[0] as any).id,
+                    quantity: 1,
+                  },
+                ],
+              }}
+            >
+              {(fetcher) => (
+                <button
+                  type="submit"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                  disabled={fetcher.state !== 'idle'}
+                  className={`bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-1 px-3 rounded-lg transition-all duration-200 flex items-center gap-2 text-md group-hover:scale-105 group-hover:shadow-lg cursor-pointer ${
+                    fetcher.state === 'submitting'
+                      ? 'animate-pulse scale-95'
+                      : ''
+                  } disabled:opacity-50 disabled:cursor-not-allowed`}
+                >
+                  <ShoppingCartIcon
+                    className={`w-5 h-5 transition-transform duration-200 ${
+                      fetcher.state === 'submitting' ? 'animate-bounce' : ''
+                    }`}
+                  />
+                  Kosárba
+                </button>
+              )}
+            </CartForm>
+          ) : (
+            <div className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-1 px-3 rounded-lg transition-all duration-200 flex items-center gap-2 text-md group-hover:scale-105 group-hover:shadow-lg">
+              <ShoppingCartIcon className="w-5 h-5" />
+              Megnézem
+            </div>
+          )}
         </div>
       </div>
     </Link>

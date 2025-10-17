@@ -16,6 +16,7 @@ import {Footer} from '~/components/Footer';
 import {Header} from '~/components/Header';
 import {MobileMenu} from '~/components/MobileMenu';
 import {CartMain} from '~/components/CartMain';
+import {Aside} from '~/components/Aside';
 
 // Mobile Menu Context
 interface MobileMenuContextValue {
@@ -141,25 +142,27 @@ export function PageLayout({
   return (
     <MobileMenuProvider>
       <CartProvider>
-        <CartSidebar cart={cart} />
-        {header && header.menu && header.shop.primaryDomain?.url && (
-          <MobileMenu
-            menu={header.menu}
-            primaryDomainUrl={header.shop.primaryDomain.url}
-            publicStoreDomain={publicStoreDomain}
-            isLoggedIn={isLoggedIn}
-          />
-        )}
-        {header && (
-          <Header
-            header={header}
-            cart={cart}
-            isLoggedIn={isLoggedIn}
-            publicStoreDomain={publicStoreDomain}
-          />
-        )}
-        <main>{children}</main>
-        <Footer />
+        <Aside.Provider>
+          <CartSidebar cart={cart} />
+          {header && header.menu && header.shop.primaryDomain?.url && (
+            <MobileMenu
+              menu={header.menu}
+              primaryDomainUrl={header.shop.primaryDomain.url}
+              publicStoreDomain={publicStoreDomain}
+              isLoggedIn={isLoggedIn}
+            />
+          )}
+          {header && (
+            <Header
+              header={header}
+              cart={cart}
+              isLoggedIn={isLoggedIn}
+              publicStoreDomain={publicStoreDomain}
+            />
+          )}
+          <main>{children}</main>
+          <Footer />
+        </Aside.Provider>
       </CartProvider>
     </MobileMenuProvider>
   );
